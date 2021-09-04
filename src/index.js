@@ -34,7 +34,7 @@ var handler = function (instance) {
 	};
 };
 
-var VirtualDOMEngine = function (options) {
+var myDOMEngine = function (options) {
 
 	// Variables
 	var _this = this;
@@ -156,17 +156,19 @@ var diff = function (template, elem) {
 /**
  * Render a UI from the template
  */
-VirtualDOMEngine.prototype.render = function () {
+ myDOMEngine.prototype.render = function () {
 
+	console.log('myDOMEngine, render')
 	// Convert the template to HTML
 	var templateHTML = stringToHTML(this.template(this.data));
 
+	console.log('myDOMEngine, diff', templateHTML, this.elem)
 	// Diff the DOM
 	diff(templateHTML, this.elem);
 
 };
 
-var app = new VirtualDOMEngine({
+var app = new myDOMEngine({
 	selector: '#app',
 	data: {
 		heading: 'My Todos',
@@ -189,4 +191,8 @@ app.render();
 // After 3 seconds, update the data and render a new UI
 setTimeout(function () {
   app.data.todos.push('Take a nap... zzzzz');
-}, 3000);
+}, 2000);
+
+setTimeout(function () {
+	app.data.todos.push('Wow....');
+}, 4000);
