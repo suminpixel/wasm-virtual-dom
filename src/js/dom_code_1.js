@@ -1,3 +1,4 @@
+//https://gomakethings.com/dom-diffing-with-vanilla-js/
 var debounceRender = function (instance) {
 
 	// If there's a pending render, cancel it
