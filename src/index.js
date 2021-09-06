@@ -163,9 +163,9 @@ updateElement($root, oldNode);
 
 console.log(`start time `);
 
-const start = Date.now();
+const start = window.performance.now();
 updateElement($root, newNode, oldNode);
-const end = Date.now();
+const end = window.performance.now();
 
 console.log(`during time : ${end-start}`);
 
