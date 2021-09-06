@@ -1,5 +1,5 @@
 #include <iostream>
-#include <nlohmann/json.hpp>
+#include "nlohmann/json.hpp"
 #include <chrono>
 
 using namespace std;
@@ -27,5 +27,7 @@ int main(void){
 
     // 총 수행 시간  (밀리 초)
     std::chrono::duration<double, std::milli> duration =  (duration_end - duration_start);
+
+    std::cout << to_string(duration.count());
     return 0;
 };
