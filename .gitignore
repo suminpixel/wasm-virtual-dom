@@ -11,3 +11,4 @@ esm/
 dist/
 .cache
 .vscode
+.vscode/

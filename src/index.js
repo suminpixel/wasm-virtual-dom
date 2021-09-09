@@ -38,6 +38,7 @@ function createElement(node) {
   // 2 : text
   // 3 : different tag
   // 4 : same tag => attribute diff  
+  // 5 : oldNode와 newNode의 태그 이름(type)이 같을 경우
   // default: newNode와 oldNode의 모든 자식 태그를 순회하며 반복
   function checkAndUpdateDom (type, parent, newNode, oldNode, index) {
     console.log(type);
@@ -82,6 +83,7 @@ function updateElement (parent, newNode, oldNode, index = 0) {
     const type = diffNode(parent, newNode, oldNode, index);
     checkAndUpdateDom(type, parent, newNode, oldNode, index);
 }
+
 function diffNode (parent, newNode, oldNode, index = 0) {
     // 1. oldNode만 있는 경우
     if (!newNode && oldNode) {
