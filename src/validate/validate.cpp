@@ -18,19 +18,19 @@ extern "C" { // So that the C++ cSIDE_MODULE_SYSTEM_FUNCTIONS_H_ompiler does not
 #ifdef __EMSCRIPTEN__
   EMSCRIPTEN_KEEPALIVE
 #endif
-  uint8_t* create_buffer(int size_needed)
-  {
-    return new uint8_t[size_needed];
-  }
+uint8_t* create_buffer(int size_needed)
+{
+  return new uint8_t[size_needed];
+}
 
   // Release the memory
 #ifdef __EMSCRIPTEN__
   EMSCRIPTEN_KEEPALIVE
 #endif
-  void free_buffer(const char* pointer)
-  {
-    delete pointer;
-  }
+void free_buffer(const char* pointer)
+{
+  delete pointer;
+}
 
   int ValidateValueProvided(const char* value, const char* error_message, char* return_error_message)
   {

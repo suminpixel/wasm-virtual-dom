@@ -16,17 +16,41 @@ using json = nlohmann::json;
 #ifdef __EMSCRIPTEN__
   EMSCRIPTEN_KEEPALIVE
 #endif
-int diff_dom(const char* old_dom, const char* new_dom){
+uint8_t* create_buffer(int size_needed)
+{
+  return new uint8_t[size_needed];
+}
+
+// Release the memory
+#ifdef __EMSCRIPTEN__
+  EMSCRIPTEN_KEEPALIVE
+#endif
+void free_buffer(const char* pointer)
+{
+  delete pointer;
+}
+
+#ifdef __EMSCRIPTEN__
+  EMSCRIPTEN_KEEPALIVE
+#endif
+int diff_dom(char* old_dom, char* new_dom){
     json old_dom_json = json::parse(old_dom);
     json new_dom_json = json::parse(new_dom);
 
-    std::cout << old_dom;
-    return 0;
+    return (old_dom_json == new_dom_json);
 //     if(old_dom_json == new_dom_json){
 //         return 1;
 //     }
 //     return 0;
 }
+
+#ifdef __EMSCRIPTEN__
+  EMSCRIPTEN_KEEPALIVE
+#endif
+int diff_string(char* str, char* str2){
+    return (str == str2);
+}
+
 
 #ifdef __EMSCRIPTEN__
   EMSCRIPTEN_KEEPALIVE
