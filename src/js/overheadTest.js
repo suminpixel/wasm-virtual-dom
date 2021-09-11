@@ -19,6 +19,9 @@ const json_obj2 = {
     ],
 };
 
+// stringfy =>
+//"{\"type\":\"ul\",\"props\":{\"class\":\"list\"},\"children\":[{\"type\":\"li\",\"props\":{},\"children\":[\"item 1\"]},{\"type\":\"li\",\"props\":{},\"children\":[\"item 2\"]}]}";
+
 const importObject = {    
     wasi_snapshot_preview1 : {
         fd_close: ()=>{},
@@ -27,7 +30,8 @@ const importObject = {
         fd_read: ()=>{},
         environ_sizes_get: ()=>{},
         environ_get: ()=>{},
-        proc_exit: (value) => {}
+        proc_exit: (value) => {},
+        clock_time_get: ()=>{}, 
     },
 };
 
@@ -50,25 +54,38 @@ const getJsonDiffOfWasm = (value, value2) => {
 
     const pointer1 = moduleExports.create_buffer((str.length + 1));
     const pointer2 = moduleExports.create_buffer((str2.length + 1));
-
+    
     copyStringToMemory(str, pointer1);
     copyStringToMemory(str2, pointer2);
-    const start1 = window.performance.now();
-    let res1 = null;
-    for(var i = 0 ;  i < 100 ; i++){
-        res1 = moduleExports.diff(pointer1, pointer2);
-     }
-    const end1 = window.performance.now();
-    console.log( `getJsonDiffOfWasm => during time : ${end1-start1} / result: ${res1}`)
-    return res1;
+
+    const isDiff = moduleExports.diff(pointer1, pointer2);
+
+    return isDiff;
 };
 
 //Javascript 상에서 비교
-const getJsonDiffOfJs = (value, value2) => {
+const getJsonDiffOfJs = (value, value2, times) => {
 
     const isDiff = JSON.stringify(value) === JSON.stringify(value2)
     return isDiff;
 };
+
+const getJsonDiffOfWasmTimes = (value, value2, times) => {
+
+    const str = JSON.stringify(value);
+    const str2 = JSON.stringify(value2);
+
+    const pointer1 = moduleExports.create_buffer((str.length + 1));
+    const pointer2 = moduleExports.create_buffer((str2.length + 1));
+    
+    copyStringToMemory(str, pointer1);
+    copyStringToMemory(str2, pointer2);
+
+    const isDiff = moduleExports.getDiffTime(pointer1, pointer2, times);
+
+    return isDiff;
+};
+
 
 const copyStringToMemory = (value, memoryOffset) => {
     const bytes = new Uint8Array(moduleMemory.buffer);
@@ -80,15 +97,21 @@ const startTest = () => {
 
     const start1 = window.performance.now();
     let res1 = null;
-    res1 = getJsonDiffOfWasm(json_obj1, json_obj2);
+    for(var i = 0 ;  i < 10000 ; i++){
+        res1 = getJsonDiffOfWasm(json_obj1, json_obj2);
+    }
     const end1 = window.performance.now();
-    //console.log( `getJsonDiffOfWasm => during time : ${end1-start1} / result: ${res1}`)
+    console.log( `getJsonDiffOfWasm => during time : ${end1-start1} / result: ${res1}`)
 
     const start2 = window.performance.now();
     let res2 = null;
-    for(var i = 0 ;  i < 100 ; i++){
+    for(var i = 0 ;  i < 10000 ; i++){
        res2 = getJsonDiffOfJs(json_obj1, json_obj2);
     }
     const end2 = window.performance.now();
     console.log( `getJsonDiffOfJs => during time : ${end2-start2} / result: ${res2}`)
+
+    const time = getJsonDiffOfWasmTimes(json_obj1, json_obj2, 10000);
+    console.log( `getJsonDiffOfWasm${10000}Times => during time : ${time} `)
+
 }

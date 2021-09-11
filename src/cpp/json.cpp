@@ -1,6 +1,10 @@
 #include <iostream>
 #include "nlohmann/json.hpp"
 #include <chrono>
+#include <cstring>
+
+//clang++ --std=c++14 src/cpp/test.cpp
+//./a.out
 
 #ifdef __EMSCRIPTEN__
   #include <emscripten.h>
@@ -39,6 +43,35 @@ int diff(char* value1, char* value2){
     json parsedValue2 = json::parse(value2);
 
     return (parsedValue1 == parsedValue2);
+}
+
+#ifdef __EMSCRIPTEN__
+  EMSCRIPTEN_KEEPALIVE
+#endif
+double getDiffTime(char* value1, char* value2, int times = 0){
+
+    // 시작 시간 기록 
+    // std::chrono::high_resolution_clock = 나노세컨드 단위 시간 측정 (10억 분의 1초))
+    std::chrono::high_resolution_clock::time_point duration_start = 
+    std::chrono::high_resolution_clock::now();
+    
+    for(int i = 0; i < times; ++i){
+        json parsedValue1 = json::parse(value1);
+        json parsedValue2 = json::parse(value2);
+
+        int res = (parsedValue1 == parsedValue2);
+    }
+    
+    // 실행 종료 시간  
+    std::chrono::high_resolution_clock::time_point duration_end = 
+    std::chrono::high_resolution_clock::now();
+
+    // 총 수행 시간  (밀리 초)
+    std::chrono::duration<double, std::milli> duration =  (duration_end - duration_start);
+    //const char * time = duration.count();
+    //std::strcpy(time_pointer, time);
+
+    return duration.count();
 }
 
 #ifdef __cplusplus
