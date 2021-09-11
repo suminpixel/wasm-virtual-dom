@@ -33,28 +33,12 @@ void free_buffer(const char* pointer)
 #ifdef __EMSCRIPTEN__
   EMSCRIPTEN_KEEPALIVE
 #endif
-int diff_dom(char* old_dom, char* new_dom){
+int diff(char* value1, char* value2){
 
-    json old_dom_json = json::parse(old_dom);
-    json new_dom_json = json::parse(new_dom);
+    json parsedValue1 = json::parse(value1);
+    json parsedValue2 = json::parse(value2);
 
-    return (old_dom_json == new_dom_json);
-}
-
-#ifdef __EMSCRIPTEN__
-  EMSCRIPTEN_KEEPALIVE
-#endif
-int diff_string(char* str, char* str2){
-    return (str == str2);
-}
-
-
-#ifdef __EMSCRIPTEN__
-  EMSCRIPTEN_KEEPALIVE
-#endif
-int console_log(){
-    return 1;
-
+    return (parsedValue1 == parsedValue2);
 }
 
 #ifdef __cplusplus
