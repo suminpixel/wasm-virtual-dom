@@ -36,6 +36,7 @@ int main(void){
     // 총 수행 시간  (밀리 초)
     std::chrono::duration<double, std::milli> duration =  (duration_end - duration_start);
 
+    std::cout << "times =>" << '\n';
     std::cout << to_string(duration.count());
-    return 0;
+    return duration.count();
 };

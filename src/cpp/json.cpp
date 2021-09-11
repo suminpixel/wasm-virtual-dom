@@ -2,6 +2,7 @@
 #include "nlohmann/json.hpp"
 #include <chrono>
 #include <cstring>
+#include <thread>
 
 //clang++ --std=c++14 src/cpp/test.cpp
 //./a.out
@@ -48,19 +49,33 @@ int diff(char* value1, char* value2){
 #ifdef __EMSCRIPTEN__
   EMSCRIPTEN_KEEPALIVE
 #endif
-double getDiffTime(char* value1, char* value2, int times = 0){
+void long_operation()
+{
+    /* Simulating a long, heavy operation. */
+    this_thread::sleep_for(100ms);
+}
+
+
+#ifdef __EMSCRIPTEN__
+  EMSCRIPTEN_KEEPALIVE
+#endif
+double diff_time(char* value1, char* value2, int times = 0){
 
     // 시작 시간 기록 
     // std::chrono::high_resolution_clock = 나노세컨드 단위 시간 측정 (10억 분의 1초))
     std::chrono::high_resolution_clock::time_point duration_start = 
     std::chrono::high_resolution_clock::now();
     
-    for(int i = 0; i < times; ++i){
+    int value = 0;
+    for(int i = 0; i < 10000; ++i){
         json parsedValue1 = json::parse(value1);
         json parsedValue2 = json::parse(value2);
 
-        int res = (parsedValue1 == parsedValue2);
+        int isDiff = (parsedValue1 == parsedValue2);
+        value = value + i;
     }
+    
+    long_operation();
     
     // 실행 종료 시간  
     std::chrono::high_resolution_clock::time_point duration_end = 

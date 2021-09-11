@@ -32,7 +32,14 @@ const importObject = {
         environ_get: ()=>{},
         proc_exit: (value) => {},
         clock_time_get: ()=>{}, 
+        emscripten_thread_sleep: ()=>{},
     },
+    env: {
+        __memory_base: 0,
+        __table_base: 0,
+        memory: new WebAssembly.Memory({initial: 1}),
+        emscripten_thread_sleep: ()=>{},
+      }
 };
 
 const getWasmModule = (moduleUrl) => {
@@ -81,9 +88,9 @@ const getJsonDiffOfWasmTimes = (value, value2, times) => {
     copyStringToMemory(str, pointer1);
     copyStringToMemory(str2, pointer2);
 
-    const isDiff = moduleExports.getDiffTime(pointer1, pointer2, times);
+    const time = moduleExports.diff_time(pointer1, pointer2, times);
 
-    return isDiff;
+    return time;
 };
 
 
