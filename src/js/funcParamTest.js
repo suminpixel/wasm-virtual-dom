@@ -38,9 +38,7 @@ const getWasmModule = (moduleUrl) => {
 
         console.log(moduleTable);
 
-        OnDomUpdateIndex = addToTable(() => { 
-            console.log('im js func !!')
-        }, 'v');
+        OnDomUpdateIndex = addToTable(appendTestNode, 'v');
 
         console.log(OnDomUpdateIndex);
 
@@ -48,7 +46,11 @@ const getWasmModule = (moduleUrl) => {
     }).catch(e=> console.log(e));
 };
 
-  
+
+const appendTestNode = () => {
+  const root = document.getElementById('app');
+  root.innerHTML = "Test String";
+}
 
 function addToTable(jsFunction, signature) {
     
