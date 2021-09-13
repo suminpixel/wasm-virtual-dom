@@ -2,4 +2,4 @@ emcc side_module_system_functions.cpp validate.cpp -s SIDE_MODULE=2 -O1 -o valid
 
 emcc validate.cpp -O1 --no-entry -o validate.wasm //--no-entry :main() 없이 STANDALONE_WASM 모드로 빌드
 
-emcc validate.cpp -O1 --no-entry -Wl,--export-table,--growable-table -o validate.wasm //함수 참조 테이블과 같이 빌드
+emcc funcParamTest.cpp -O1 --no-entry -Wl,--export-table,--growable-table -o funcParamTest.wasm //함수 참조 테이블과 같이 빌드

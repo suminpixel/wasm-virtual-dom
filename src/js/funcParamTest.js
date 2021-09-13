@@ -11,15 +11,23 @@ let OnDomUpdateCallbacks = { resolve: null, reject: null };
 
 let moduleMemory = null;
 let moduleExports = null;
-let moduleTable = new WebAssembly.Table({ element: "anyfunc", initial: 2 });
-  
+let moduleTable = null;
+
 const importObject = {    
     wasi_snapshot_preview1 : {
       proc_exit: (value) => {}
-    }
+    },
+    __table_base: 0,
+    memory: moduleMemory,
+    __table_base: 0,
+    table: moduleTable,
+    abort: function(e) {throw new Error(e)}
 };
 
 const getWasmModule = (moduleUrl) => {
+
+    moduleTable = new WebAssembly.Table({ element: "anyfunc", initial: 1 });
+  
     console.log('getWasmModule');
     WebAssembly.instantiateStreaming(fetch('../cpp/funcParamTest.wasm'), importObject).then(result => {
         console.log('instantiateStreaming')
@@ -44,9 +52,11 @@ const getWasmModule = (moduleUrl) => {
 
 function addToTable(jsFunction, signature) {
     
+    console.log('addToTable');
     const index = moduleTable.length;
-  
+    console.log(index);
     moduleTable.grow(1); 
+    console.log('addToTable');
     moduleTable.set(index, convertJsFunctionToWasm(jsFunction, signature));
   
     // Tell the caller the index of JavaScript function in the Table
@@ -57,6 +67,8 @@ function addToTable(jsFunction, signature) {
 function convertJsFunctionToWasm(func, sig) {
     // The module is static, with the exception of the type section, which is
     // generated based on the signature passed in.
+
+    console.log('convertJsFunctionToWasm');
     var typeSection = [
       0x01, // id: section,
       0x00, // length: 0 (placeholder)
