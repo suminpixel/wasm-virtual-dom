@@ -157,6 +157,8 @@ const render = (state) => (
 const oldNode = render(oldState);
 const newNode = render(newState);
 
+console.log(oldNode);
+console.log(newNode)
 const $root = document.createElement('app');
 
 document.body.appendChild($root);
@@ -169,7 +171,7 @@ const start = window.performance.now();
 updateElement($root, newNode, oldNode);
 const end = window.performance.now();
 
-console.log(`during time : ${end-start}`);
+console.log(`updateElement during time : ${end-start}`);
 
 // setTimeout(() => 
 //     {
