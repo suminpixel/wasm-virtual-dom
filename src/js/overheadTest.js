@@ -70,6 +70,18 @@ const getJsonDiffOfWasm = (value, value2) => {
     return isDiff;
 };
 
+const getjJsonDiffOfWasmOnlyJson = (value, value2) => {
+    const pointer1 = moduleExports.create_buffer((value.length + 1));
+    const pointer2 = moduleExports.create_buffer((value2.length + 1));
+     
+    copyStringToMemory(value, pointer1);
+    copyStringToMemory(value2, pointer2);
+
+    const isDiff = moduleExports.diff_json(pointer1, pointer2);
+
+    return isDiff;
+
+};
 //Javascript 상에서 비교
 const getJsonDiffOfJs = (value, value2, times) => {
 
@@ -102,10 +114,12 @@ const copyStringToMemory = (value, memoryOffset) => {
 const startTest = () => {
     console.log('startTest');
 
+    console.log()
+
     const start1 = window.performance.now();
     let res1 = null;
     for(var i = 0 ;  i < 10000 ; i++){
-        res1 = getJsonDiffOfWasm(json_obj1, json_obj2);
+        res1 = getjJsonDiffOfWasmOnlyJson(json_obj1, json_obj2);
     }
     const end1 = window.performance.now();
     console.log( `getJsonDiffOfWasm => during time : ${end1-start1} / result: ${res1}`)

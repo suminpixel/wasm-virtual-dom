@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>WASM-VIRTUAL-DOM</title>
  </head>
-  <body onload="getWasmModule()">
+  <body>
     <noscript>
       You need to enable JavaScript to run this app.
     </noscript>
@@ -13,9 +13,12 @@
     <div id="app"></div>
     <script src="https://unpkg.com/react@16.14.0/umd/react.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="text/babel" src="./modules/wasm_fatcher.js"></script>
     <!-- <script type="text/babel" src="./index.js"></script> -->
     <!-- <script type="text/babel" src="./js/test.js"></script> -->
-    <script src="./js/funcParamTest.js"></script>
+    <!-- <script src="./js/funcParamTest.js"></script> -->
+    <!-- <script src="./js/overheadTest.js"></script> -->
     <!-- <script src="./validate/editproduct.js"></script> -->
+    <script type="text/babel" src="./modules/dom_engine.js"></script>
   </body>
 </html>
