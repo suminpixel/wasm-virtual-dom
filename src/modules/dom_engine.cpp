@@ -141,6 +141,13 @@ int get_json_value (char* obj, char* key) {
 int diff_json (json* obj1, json* obj2) {
     return (*obj1 == *obj2);
 };
+
+#ifdef __EMSCRIPTEN__
+  EMSCRIPTEN_KEEPALIVE
+#endif
+int diff_json (json* obj1, json* obj2) {
+    return (*obj1 == *obj2);
+};
 //   // diff case
 //   // 0 : return false
 //   // 1 : remove child node

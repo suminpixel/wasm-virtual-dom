@@ -182,7 +182,6 @@ console.log(`updateElement during time : ${end-start}`);
 //         const start = Date.now();
 //         updateElement($root, newNode, oldNode);
 //         const end = Date.now();
-
 //         console.log(`during time : ${end-start}`);
 //     }, 1000); 
     
