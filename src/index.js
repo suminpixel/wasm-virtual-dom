@@ -157,8 +157,12 @@ const render = (state) => (
 const oldNode = render(oldState);
 const newNode = render(newState);
 
+
 console.log(oldNode);
 console.log(newNode)
+
+console.log(oldNode, typeof oldNode)
+
 const $root = document.createElement('app');
 
 document.body.appendChild($root);

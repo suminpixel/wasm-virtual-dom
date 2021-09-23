@@ -1,8 +1,3 @@
-const initialData = {
-    name: "Women's Mid Rise Skinny Jeans",
-    categoryId: "100",
-  };
-  
 const MAXIMUM_NAME_LENGTH = 50;
 const VALID_CATEGORY_IDS = [100, 101];
 
@@ -15,7 +10,16 @@ let moduleTable = null;
 
 const importObject = {    
     wasi_snapshot_preview1 : {
-      proc_exit: (value) => {}
+      proc_exit: (value) => {},
+      fd_close: ()=>{},
+      fd_write: ()=>{},
+      fd_seek: ()=>{},
+      fd_read: ()=>{},
+      environ_sizes_get: ()=>{},
+      environ_get: ()=>{},
+      proc_exit: (value) => {},
+      clock_time_get: ()=>{}, 
+      emscripten_thread_sleep: ()=>{},
     },
     __table_base: 0,
     memory: moduleMemory,
@@ -24,25 +28,21 @@ const importObject = {
     abort: function(e) {throw new Error(e)}
 };
 
-const getWasmModule = (moduleUrl) => {
+const getWasmModule = async () => {
 
     moduleTable = new WebAssembly.Table({ element: "anyfunc", initial: 1 });
   
     console.log('getWasmModule');
-    WebAssembly.instantiateStreaming(fetch('../cpp/funcParamTest.wasm'), importObject).then(result => {
+    await WebAssembly.instantiateStreaming(fetch('../modules/dom_engine.wasm'), importObject).then(result => {
         console.log('instantiateStreaming')
-        
         moduleExports = result.instance.exports;
         moduleMemory = moduleExports.memory;
         moduleTable = moduleExports.__indirect_function_table;
-
-        console.log(moduleTable);
-
-        OnDomUpdateIndex = addToTable(appendTestNode, 'v');
-
-        console.log(OnDomUpdateIndex);
-
-        moduleExports.act_js_func(OnDomUpdateIndex);
+        console.log('moduleExports', moduleExports)
+        //console.log(moduleTable);
+        //OnDomUpdateIndex = addToTable(appendTestNode, 'v');
+        //console.log(OnDomUpdateIndex);
+        //moduleExports.act_js_func(OnDomUpdateIndex);
     }).catch(e=> console.log(e));
 };
 
@@ -128,3 +128,8 @@ function convertJsFunctionToWasm(func, sig) {
     var wrappedFunc = instance.exports.f;
     return wrappedFunc;
   }
+
+function copyStringToMemory(value, memoryOffset) {
+    const bytes = new Uint8Array(moduleMemory.buffer);
+    bytes.set(new TextEncoder().encode((value + "\0")), memoryOffset);
+}
