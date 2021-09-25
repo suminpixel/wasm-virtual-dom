@@ -4,6 +4,7 @@ function h(type, props, ...children) {
 }
   
 function createElement(node) {
+
     if (typeof node === 'string') {
         // text node를 만들어서 반환한다.
         return document.createTextNode(node);
@@ -22,7 +23,8 @@ function createElement(node) {
     // node의 children virtual dom을 dom으로 변환한다.
     // 즉, 모든 VirtualDOM을 순회한다.
     const children = node.children.map(createElement);
-    
+    console.log('children');
+    console.log(children);
     // $el에 변환된 children dom을 추가한다.
     children.forEach(child => $el.appendChild(child));
     
@@ -135,7 +137,7 @@ const newState = [
 ];
   
 const render = (state) => (
-    <div>
+    <div key={1}>
         <ul>
         { state.map(({ completed, content }) => (
             <li class={completed ? 'completed' : null}>

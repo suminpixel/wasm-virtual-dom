@@ -1,12 +1,25 @@
-const dom_json = {
+const old_dom = {
     type: 'ul',
-    props: {'class': 'list'},
+    props: {'class': 'list', key: 1},
     children: [
-        {type: 'li', props: {}, children: ['item 1']},
-        {type: 'li', props: {}, children: ['item 2']},
+        {type: 'li', props: {key: 2}, children: ['item 1']},
+        {type: 'li', props: {key: 3}, children: ['item 2']},
     ],
 };
 
+const new_dom = {
+  type: 'ul',
+  props: {'class': 'list2', key: 1},
+  children: [
+      {type: 'li', props: {key: 2}, children: ['item 1']},
+      {type: 'li', props: {}, children: ['item 2']},
+  ],
+};
+
+const root = document.getElementById('app');
+let func_pointer = -1;
+
+let append_pointer = -1;
 const MAXIMUM_NAME_LENGTH = 50;
 const VALID_CATEGORY_IDS = [100, 101];
 
@@ -42,6 +55,13 @@ const getWasmModule = (moduleUrl) => {
         
         moduleExports = result.instance.exports;
         moduleMemory = moduleExports.memory;
+        moduleTable = moduleExports.__indirect_function_table;
+        func_pointer = addToTable(appendTextToDom, 'v');
+        moduleExports.append_text_to_dom(func_pointer);
+
+        initDom(old_dom, new_dom);
+        diffAllDom();
+        diffDom();
         //moduleTable = moduleExports.__indirect_function_table;
 
         //OnDomUpdateIndex = addToTable(appendTestNode, 'v');
@@ -49,42 +69,61 @@ const getWasmModule = (moduleUrl) => {
         //console.log(OnDomUpdateIndex);
 
         //moduleExports.act_js_func(OnDomUpdateIndex);
-        //const str = JSON.stringify(dom_json);
-    
-        //const pointer = moduleExports.create_buffer((str.length + 1));
+        
         //const pointer2 = moduleExports.create_buffer(JSON.stringify(dom_json).length + 1);
-        const cppPointer = moduleExports.create_buffer(256);
-        //copyStringToMemory(str, pointer);
-    
-        //moduleExports.set_old_dom(pointer);
-
-        //const res = moduleExports.get_number();
-
-        moduleExports.get_old_dom(cppPointer);
-
-        const result_dom = getStringFromMemory(cppPointer);
-
-        console.log(result_dom);
 
     }).catch(e=> console.log(e));
 };
 
+// old dom / new dom 을 담은 포인터 세팅 및 wasm module에 전달
+const initDom = (old_dom, new_dom) => {
+  const old_value = JSON.stringify(old_dom);
+  const new_value = JSON.stringify(new_dom);
+  const old_pointer = moduleExports.create_buffer((old_value.length + 1));
+  const new_pointer = moduleExports.create_buffer((new_value.length + 1));
+  
+  copyStringToMemory(old_value, old_pointer);
+  copyStringToMemory(new_value, new_pointer);
 
-const appendTestNode = (text) => {
-  const root = document.getElementById('app');
-  root.innerHTML = text;
+  moduleExports.init_dom(old_pointer, new_pointer);
+};
+
+// old dom / new dom 을 출력 (테스트용)
+const getDom = () => {
+  const result_pointer = moduleExports.create_buffer(256);
+  moduleExports.get_dom(result_pointer);
+  const result_dom = getStringFromMemory(result_pointer);
+  console.log(result_dom);
+};
+
+// old dom / new dom 을 비교 (테스트용)
+const diffAllDom = () => {
+  const result = moduleExports.diff_all_dom();
+  console.log(result);
+};
+
+const diffDom = () => {
+  const result = moduleExports.diff_dom();
+  console.log(result);
+};
+
+
+// node에 text 추가
+const appendTextToDom = (node_id, text) => {
+  console.log(node_id, text);
+  const root = document.getElementById('text');
+  root.innerHTML = 'text';
 }
 
+// const appendTestNode = (text) => {
+//   const root = document.getElementById('app');
+//   root.innerHTML = text;
+// }
+
 function addToTable(jsFunction, signature) {
-    
-    console.log('addToTable');
     const index = moduleTable.length;
-    console.log(index);
     moduleTable.grow(1); 
-    console.log('addToTable');
     moduleTable.set(index, convertJsFunctionToWasm(jsFunction, signature));
-  
-    // Tell the caller the index of JavaScript function in the Table
     return index;
   }
   
